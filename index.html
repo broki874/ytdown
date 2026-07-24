@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Downloader</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 50px; background: #f9f9f9; }
+    input, button { padding: 15px; font-size: 18px; margin: 10px; }
+    button { background: #FF0000; color: white; border: none; cursor: pointer; }
+    .link { padding: 15px; background: #333; color: white; margin: 10px; display: inline-block; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>🎥 YouTube Video Downloader</h1>
+  <input type="text" id="url" placeholder="Paste YouTube URL" style="width:70%;">
+  <button onclick="download()">Download</button>
+  <div id="result"></div>
+
+  <script>
+    async function download() {
+      const url = document.getElementById('url').value;
+      const result = document.getElementById('result');
+      result.innerHTML = 'Processing...';
+
+      try {
+        const response = await fetch('https://api.cobalt.tools/api/json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await response.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          result.innerHTML = 'Try a different video.';
+        }
+      } catch (e) {
+        result.innerHTML = 'Error. Try again.';
+      }
+    }
+  </script>
+</body>
+</html>
