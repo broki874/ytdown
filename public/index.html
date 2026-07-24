@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Downloader</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 50px; background: #f4f4f4; }
+    input { width: 70%; padding: 15px; font-size: 18px; }
+    button { padding: 15px 30px; background: #FF0000; color: white; border: none; font-size: 18px; cursor: pointer; }
+    .format { padding: 12px 20px; background: #333; color: white; margin: 8px; display: inline-block; border-radius: 5px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>🎥 YouTube Video Downloader</h1>
+  <form id="form">
+    <input type="text" id="url" placeholder="Paste YouTube URL" required>
+    <button type="submit">Get Formats</button>
+  </form>
+  <div id="results"></div>
+
+  <script>
+    document.getElementById('form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const url = document.getElementById('url').value;
+      const resDiv = document.getElementById('results');
+      resDiv.innerHTML = 'Loading...';
+
+      const response = await fetch('/info', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({url})
+      });
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else if (data.picker) {
+        let html = `<h2>${data.title}</h2>`;
+        data.picker.forEach(item => {
+          html += `<a href="${item.url}" class="format" target="_blank">${item.name || 'Download'}</a>`;
+        });
+        resDiv.innerHTML = html;
+      } else {
+        resDiv.innerHTML = 'Download link ready. Check console or try again.';
+      }
+    });
+  </script>
+</body>
+</html>
